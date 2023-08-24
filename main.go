@@ -9,6 +9,7 @@ import (
 type Candidate struct {
 	Name  string
 	Party string
+	Votes int
 }
 
 func main() {
@@ -36,7 +37,6 @@ func main() {
 		candidates[i] = Candidate{Name: candidateName, Party: candidateParty}
 	}
 
-	votes := make(map[int]int)
 	blankVotes := 0
 	nullVotes := 0
 	totalVotes := 0
@@ -64,8 +64,11 @@ func main() {
 			blankVotes++
 		default:
 			if _, ok := candidates[vote]; ok {
-				votes[vote]++
+				candidate := candidates[vote]
+				candidate.Votes++
+				candidates[vote] = candidate
 				totalVotes++
+				fmt.Printf("%s (%s): %d votos\n\n", candidate.Name, candidate.Party, candidate.Votes)
 			} else {
 				fmt.Println("Opción de voto inválida.")
 			}
@@ -73,8 +76,8 @@ func main() {
 	}
 
 	fmt.Println("\nResultados de la Votación:")
-	for num, candidate := range candidates {
-		voteCount := votes[num]
+	for _, candidate := range candidates {
+		voteCount := candidate.Votes
 		percentage := float64(voteCount) / float64(totalVotes) * 100
 		fmt.Printf("%s (%s): %d votos (%.2f%%)\n", candidate.Name, candidate.Party, voteCount, percentage)
 	}
